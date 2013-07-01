@@ -13,13 +13,13 @@ class PlainDB(object):
         self._backend = backend(path)
 
         try:
-            self._last_id = self._read_yaml().pop()['id']
+            self._last_id = self._read().pop()['id']
         except IndexError:
             self._last_id = 0
 
-    def _read_yaml(self):
+    def _read(self):
         """
-        Reading access to the yaml backend.
+        Reading access to the backend.
 
         :returns: all values
         :rtype: list
@@ -27,9 +27,9 @@ class PlainDB(object):
 
         return self._backend.read()
 
-    def _write_yaml(self, values):
+    def _write(self, values):
         """
-        Writing access to the yaml backend
+        Writing access to the backend
 
         :param values: the new values to write
         :type values: list
@@ -45,7 +45,7 @@ class PlainDB(object):
         :rtype: list
         """
 
-        return self._read_yaml()
+        return self._read()
 
     def insert(self, element):
         """
@@ -57,10 +57,10 @@ class PlainDB(object):
         self._last_id += 1
         element['id'] = self._last_id
 
-        values = self._read_yaml()
+        values = self._read()
         values.append(element)
 
-        self._write_yaml(values)
+        self._write(values)
 
     def remove(self, where):
         """
@@ -71,7 +71,7 @@ class PlainDB(object):
         """
 
         to_remove = self.search(where)
-        self._write_yaml([e for e in self._read_yaml() if e != to_remove])
+        self._write([e for e in self._read() if e != to_remove])
 
     def search(self, where):
         """
@@ -84,7 +84,7 @@ class PlainDB(object):
         :rtype: list
         """
 
-        return [e for e in self._read_yaml() if where(e)]
+        return [e for e in self._read() if where(e)]
 
     def get(self, where):
         """
@@ -97,6 +97,6 @@ class PlainDB(object):
         :rtype: dict or None
         """
 
-        for el in self._read_yaml():
+        for el in self._read():
             if where(el):
                 return el
