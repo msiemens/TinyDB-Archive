@@ -25,7 +25,7 @@ class PlainDB(object):
         :rtype: list
         """
 
-        return self._backend.read()
+        return self._backend.read() or []
 
     def _write(self, values):
         """
@@ -36,6 +36,9 @@ class PlainDB(object):
         """
 
         self._backend.write(values)
+
+    def __len__(self):
+        return len(self.all())
 
     def all(self):
         """
@@ -70,8 +73,14 @@ class PlainDB(object):
         :type where: has
         """
 
-        to_remove = self.search(where)
+        to_remove = self.get(where)
         self._write([e for e in self._read() if e != to_remove])
+
+    def purge(self):
+        """
+        Purge the DB by removing all elements.
+        """
+        self._write([])
 
     def search(self, where):
         """

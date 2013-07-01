@@ -44,7 +44,7 @@ class MemoryBackend(Backend):
     Store the data as YAML in memory.
     """
 
-    def __init__(self):
+    def __init__(self, path=None):
         super(MemoryBackend, self).__init__()
         self.memory = ''
 
