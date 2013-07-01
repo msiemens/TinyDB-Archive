@@ -38,6 +38,9 @@ class PlainDB(object):
         self._backend.write(values)
 
     def __len__(self):
+        """
+        Get the total number of elements in the DB.
+        """
         return len(self.all())
 
     def all(self):

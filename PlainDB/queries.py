@@ -1,46 +1,76 @@
-class _has(object):
+__all__ = ('has')
+
+
+class query(object):
+    """
+    The baisc query used for integer like comparisons (==, >, <, ...)
+    """
+
     def __init__(self, key):
         self._key = key
         self._repr = '<has>'
         self._ready = False
 
     def __eq__(self, other):
+        """
+        Equals el[key] == other
+        """
         self._ready = True
         self._value_eq = other
         self._update_repr('==', other)
         return self
 
     def __lt__(self, other):
+        """
+        Equals el[key] < other
+        """
         self._ready = True
         self._value_lt = other
         self._update_repr('<', other)
         return self
 
     def __le__(self, other):
+        """
+        Equals el[key] <= other
+        """
         self._ready = True
         self._value_le = other
         self._update_repr('<=', other)
         return self
 
     def __gt__(self, other):
+        """
+        Equals el[key] > other
+        """
         self._ready = True
         self._value_gt = other
         self._update_repr('>', other)
         return self
 
     def __ge__(self, other):
+        """
+        Equals el[key] >= other
+        """
         self._ready = True
         self._value_ge = other
         self._update_repr('>=', other)
         return self
 
     def __or__(self, other):
+        """
+        Equals self | other
+        See :class:`query_or`.
+        """
         self._ready = True
-        return _has_or(self, other)
+        return query_or(self, other)
 
     def __and__(self, other):
+        """
+        Equals self & other
+        See :class:`query_and`.
+        """
         self._ready = True
-        return _has_and(self, other)
+        return query_and(self, other)
 
     def __call__(self, element):
         if not self._ready:
@@ -80,10 +110,13 @@ class _has(object):
     def __repr__(self):
         return self._repr
 
-has = _has
+has = query
 
 
-class _has_or(object):
+class query_or(object):
+    """
+    Combines to queries with a logical 'or'.
+    """
     def __init__(self, where1, where2):
         self._cond_1 = where1
         self._cond_2 = where2
@@ -95,7 +128,10 @@ class _has_or(object):
         return '({}) or ({})'.format(self._cond_1, self._cond_2)
 
 
-class _has_and(object):
+class query_and(object):
+    """
+    Combines to queries with a logical 'and'.
+    """
     def __init__(self, where1, where2):
         self._cond_1 = where1
         self._cond_2 = where2
