@@ -1,84 +1,6 @@
-import yaml
+from PlainDB.queries import has
 
-
-class _has(object):
-    def __init__(self, key):
-        self._key = key
-
-    def __eq__(self, other):
-        self._value_eq = other
-        return self
-
-    def __lt__(self, other):
-        self._value_lt = other
-        return self
-
-    def __le__(self, other):
-        self._value_le = other
-        return self
-
-    def __gt__(self, other):
-        self._value_gt = other
-        return self
-
-    def __ge__(self, other):
-        self._value_ge = other
-        return self
-
-    def __or__(self, other):
-        return _has_or(self, other)
-
-    def __and__(self, other):
-        return _has_and(self, other)
-
-    def __call__(self, element):
-        if self._key not in element:
-            return False
-
-        try:
-            return element[self._key] == self._value_eq
-        except AttributeError:
-            pass
-
-        try:
-            return element[self._key] < self._value_lt
-        except AttributeError:
-            pass
-
-        try:
-            return element[self._key] <= self._value_le
-        except AttributeError:
-            pass
-
-        try:
-            return element[self._key] > self._value_gt
-        except AttributeError:
-            pass
-
-        try:
-            return element[self._key] >= self._value_ge
-        except AttributeError:
-            pass
-
-has = _has
-
-
-class _has_or(object):
-    def __init__(self, where1, where2):
-        self._cond_1 = where1
-        self._cond_2 = where2
-
-    def __call__(self, element):
-        return self._cond_1(element) or self._cond_2(element)
-
-
-class _has_and(object):
-    def __init__(self, where1, where2):
-        self._cond_1 = where1
-        self._cond_2 = where2
-
-    def __call__(self, element):
-        return self._cond_1(element) and self._cond_2(element)
+from backends import Backend, YAMLBackend
 
 
 class PlainDB(object):
@@ -86,8 +8,10 @@ class PlainDB(object):
     A simple DB storing all types of python objects using a YAML file.
     """
 
-    def __init__(self, path):
-        self._handle = open(path, 'r+')
+    def __init__(self, path, backend=YAMLBackend):
+        #: :type: Backend
+        self._backend = backend(path)
+
         try:
             self._last_id = self._read_yaml().pop()['id']
         except IndexError:
@@ -101,9 +25,7 @@ class PlainDB(object):
         :rtype: list
         """
 
-        self._handle.seek(0)  # Move file pointer to file begin
-        values = yaml.load(self._handle)
-        return values or []
+        return self._backend.read()
 
     def _write_yaml(self, values):
         """
@@ -113,9 +35,7 @@ class PlainDB(object):
         :type values: list
         """
 
-        self._handle.seek(0)
-        yaml.dump(values, self._handle)
-        self._handle.flush()
+        self._backend.write(values)
 
     def all(self):
         """
