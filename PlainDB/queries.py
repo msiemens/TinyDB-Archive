@@ -1,4 +1,4 @@
-__all__ = ('has')
+__all__ = 'has'
 
 
 class query(object):
