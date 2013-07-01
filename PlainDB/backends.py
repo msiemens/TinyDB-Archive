@@ -35,3 +35,19 @@ class YAMLBackend(Backend):
     def read(self):
         self._handle.seek(0)
         return yaml.load(self._handle)
+
+
+class MemoryBackend(Backend):
+    """
+    Store the data as YAML in memory.
+    """
+
+    def __init__(self):
+        super(MemoryBackend, self).__init__()
+        self.memory = ''
+
+    def write(self, data):
+        self.memory = yaml.dump(data)
+
+    def read(self):
+        return yaml.load(self.memory)

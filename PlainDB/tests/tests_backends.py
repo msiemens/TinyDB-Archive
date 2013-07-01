@@ -1,22 +1,17 @@
 import os
 import tempfile
-import string
 import random
 random.seed()
 
-from PlainDB.backends import YAMLBackend
 from nose.tools import *
 
+from PlainDB.backends import YAMLBackend
+
 path = None
-element = None
-element = {
-    'type': 'string',
-    'length': 5,
-    'chars': [
-        'a', 'b', 'c', 'd', 'e'
-    ],
-    'ready': True
-}
+element = {'none': [None, None], 'int': 42, 'float': 3.1415899999999999,
+           'list': ['LITE', 'RES_ACID', 'SUS_DEXT'],
+           'dict': {'hp': 13, 'sp': 5},
+           'bool': [True, False, True, False]}
 
 
 def setup():
