@@ -1,5 +1,3 @@
-__author__ = 'markus'
-
 import yaml
 
 
@@ -15,8 +13,16 @@ class _has(object):
         self._value_lt = other
         return self
 
+    def __le__(self, other):
+        self._value_le = other
+        return self
+
     def __gt__(self, other):
         self._value_gt = other
+        return self
+
+    def __ge__(self, other):
+        self._value_ge = other
         return self
 
     def __or__(self, other):
@@ -26,18 +32,31 @@ class _has(object):
         return _has_and(self, other)
 
     def __call__(self, element):
+        if self._key not in element:
+            return False
+
         try:
-            return self._key in element and element[self._key] == self._value_eq
+            return element[self._key] == self._value_eq
         except AttributeError:
             pass
 
         try:
-            return self._key in element and element[self._key] < self._value_lt
+            return element[self._key] < self._value_lt
         except AttributeError:
             pass
 
         try:
-            return self._key in element and element[self._key] > self._value_gt
+            return element[self._key] <= self._value_le
+        except AttributeError:
+            pass
+
+        try:
+            return element[self._key] > self._value_gt
+        except AttributeError:
+            pass
+
+        try:
+            return element[self._key] >= self._value_ge
         except AttributeError:
             pass
 
@@ -60,6 +79,7 @@ class _has_and(object):
 
     def __call__(self, element):
         return self._cond_1(element) and self._cond_2(element)
+
 
 class PlainDB(object):
     """
