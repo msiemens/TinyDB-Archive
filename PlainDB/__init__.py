@@ -43,6 +43,12 @@ class PlainDB(object):
         """
         return len(self.all())
 
+    def __contains__(self, where):
+        """
+        Equals to bool(PlainDB.search(where)))
+        """
+        return bool(self.search(where))
+
     def all(self):
         """
         Get all elements stored in the DB.

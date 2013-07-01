@@ -1,5 +1,9 @@
 from abc import ABCMeta, abstractmethod
 
+import os
+
+from helpers import touch
+
 import yaml
 
 
@@ -27,6 +31,7 @@ class YAMLBackend(Backend):
 
     def __init__(self, path):
         super(YAMLBackend, self).__init__()
+        touch(path)  # Create file if not exists
         self._handle = open(path, 'r+')
 
     def write(self, data):
