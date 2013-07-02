@@ -28,9 +28,8 @@ class Backend(object):
 class YAMLBackend(Backend):
     """
     Store the data in a YAML file.
-
-    TODO: Add caching
     """
+    # TODO: Add caching
 
     def __init__(self, path):
         super(YAMLBackend, self).__init__()

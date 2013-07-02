@@ -103,8 +103,19 @@ class PlainDB(object):
 
 
 class Table(object):
+    """
+    Represents a single PlainDB Table.
+    """
 
     def __init__(self, name, db):
+        """
+        Get access to a table.
+
+        :param name: The name of the table.
+        :type name: str
+        :param db: The parent database.
+        :type db: PlainDB
+        """
         self.name = name
         self._db = db
 
