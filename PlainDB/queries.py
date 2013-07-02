@@ -121,6 +121,12 @@ class query_or(object):
         self._cond_1 = where1
         self._cond_2 = where2
 
+    def __and__(self, other):
+        return query_and(self, other)
+
+    def __or__(self, other):
+        return query_or(self, other)
+
     def __call__(self, element):
         return self._cond_1(element) or self._cond_2(element)
 
@@ -135,6 +141,12 @@ class query_and(object):
     def __init__(self, where1, where2):
         self._cond_1 = where1
         self._cond_2 = where2
+
+    def __and__(self, other):
+        return query_and(self, other)
+
+    def __or__(self, other):
+        return query_or(self, other)
 
     def __call__(self, element):
         return self._cond_1(element) and self._cond_2(element)
