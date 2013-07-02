@@ -2,9 +2,12 @@ from abc import ABCMeta, abstractmethod
 
 import os
 
-from helpers import touch
-
 import yaml
+
+
+def touch(fname, times=None):
+    with file(fname, 'a'):
+        os.utime(fname, times)
 
 
 class Backend(object):
