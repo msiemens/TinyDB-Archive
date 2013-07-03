@@ -1,3 +1,5 @@
+import re
+
 __all__ = 'has'
 
 
@@ -28,6 +30,12 @@ class query(AndOrMixin):
     def __init__(self, key):
         self._key = key
         self._repr = '<has>'
+
+    def matches(self, regex):
+        """
+        Equals self.matches(...).
+        """
+        return query_regex(self._key, regex)
 
     def __eq__(self, other):
         """
@@ -172,3 +180,19 @@ class query_and(AndOrMixin):
 
     def __repr__(self):
         return '({}) and ({})'.format(self._cond_1, self._cond_2)
+
+
+class query_regex(AndOrMixin):
+    """
+    Lets check a field value against a regex.
+    """
+    def __init__(self, key, regex):
+        self.regex = regex
+        self._key = key
+
+    def __call__(self, element):
+        return bool(self._key in element
+                and re.match(self.regex, element[self._key]))
+
+    def __repr__(self):
+        return '\'{}\' ~= {} '.format(self._key, self.regex)

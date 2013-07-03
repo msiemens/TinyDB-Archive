@@ -83,3 +83,12 @@ def test_has_key():
 
     assert_true(query({'val3': 1}))
     assert_false(query({'val1': 1, 'val2': 2}))
+
+
+def test_regex():
+    query = has('val').matches(r'\d{2}\.')
+
+    assert_true(query({'val': '42.'}))
+    assert_false(query({'val': '44'}))
+    assert_false(query({'val': 'ab.'}))
+    assert_false(query({'': None}))
