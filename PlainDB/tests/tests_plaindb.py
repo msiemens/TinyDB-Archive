@@ -1,4 +1,4 @@
-from PlainDB import PlainDB, has
+from PlainDB import PlainDB, field
 from PlainDB.backends import MemoryBackend
 
 from nose.tools import *
@@ -31,7 +31,7 @@ def test_insert():
     db.purge()
 
     db.insert({'int': 1, 'char': 'a'})
-    assert_equal(len(db.search(has('int') == 1)), 1)
+    assert_equal(len(db.search(field('int') == 1)), 1)
 
 
 def test_insert_multiple():
@@ -41,8 +41,8 @@ def test_insert_multiple():
     db.insert({'int': 1, 'char': 'b'})
     db.insert({'int': 1, 'char': 'c'})
 
-    assert_equal(len(db.search(has('int') == 1)), 3)
-    assert_equal(len(db.search(has('char') == 'a')), 1)
+    assert_equal(len(db.search(field('int') == 1)), 3)
+    assert_equal(len(db.search(field('char') == 'a')), 1)
 
 
 def test_remove():
@@ -52,7 +52,7 @@ def test_remove():
     db.insert({'int': 1, 'char': 'b'})
     db.insert({'int': 1, 'char': 'c'})
 
-    db.remove(has('char') == 'b')
+    db.remove(field('char') == 'b')
 
     assert_equal(len(db), 2)
 
@@ -64,7 +64,7 @@ def test_search():
     db.insert({'int': 1, 'char': 'b'})
     db.insert({'int': 1, 'char': 'c'})
 
-    results = db.search(has('int') == 1)
+    results = db.search(field('int') == 1)
     assert_equal(len(results), 3)
 
     assert_equal(results[0]['char'], 'a')
@@ -78,5 +78,5 @@ def test_get():
     db.insert({'int': 1, 'char': 'b'})
     db.insert({'int': 1, 'char': 'c'})
 
-    assert_equal(db.get(has('int') == 1)['char'], 'a')
-    assert_equal(db.get(has('char') == 'b')['char'], 'b')
+    assert_equal(db.get(field('int') == 1)['char'], 'a')
+    assert_equal(db.get(field('char') == 'b')['char'], 'b')

@@ -1,5 +1,5 @@
 from PlainDB.backends import MemoryBackend
-from PlainDB.queries import has
+from PlainDB.queries import field
 
 from backends import Backend, YAMLBackend
 
@@ -15,13 +15,13 @@ class PlainDB(object):
 
     >>> db = PlainDB('<memory>', backend=MemoryBackend)
     >>> db.insert({'data': 5})  # Insert into '_default' table
-    >>> db.search(has('data') == 5)
+    >>> db.search(field('data') == 5)
     [{'data': 5, '_id': 1}]
     >>> # Now let's use a table
     >>> tbl = db.table('our_table')
     >>> for i in range(10):
     ...     tbl.insert({'data': i % 2})
-    >>> len(tbl.search(has('data') == 0))
+    >>> len(tbl.search(field('data') == 0))
     5
     >>>
 
