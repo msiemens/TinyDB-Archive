@@ -1,7 +1,26 @@
 __all__ = 'has'
 
 
-class query(object):
+class AndOrMixin(object):
+    """
+    TODO: Docstring
+    """
+    def __or__(self, other):
+        """
+        Equals self | other
+        See :class:`query_or`.
+        """
+        return query_or(self, other)
+
+    def __and__(self, other):
+        """
+        Equals self & other
+        See :class:`query_and`.
+        """
+        return query_and(self, other)
+
+
+class query(AndOrMixin):
     """
     The baisc query used for integer like comparisons (==, >, <, ...)
     """
@@ -16,6 +35,15 @@ class query(object):
         """
         self._value_eq = other
         self._update_repr('==', other)
+        return self
+
+    def __ne__(self, other):
+        """
+        Equals ! self
+        See :class:`query_not`.
+        """
+        self._value_ne = other
+        self._update_repr('!=', other)
         return self
 
     def __lt__(self, other):
@@ -50,19 +78,12 @@ class query(object):
         self._update_repr('>=', other)
         return self
 
-    def __or__(self, other):
+    def __invert__(self):
         """
-        Equals self | other
-        See :class:`query_or`.
+        Equals ~ self
+        See :class:`query_not`.
         """
-        return query_or(self, other)
-
-    def __and__(self, other):
-        """
-        Equals self & other
-        See :class:`query_and`.
-        """
-        return query_and(self, other)
+        return query_not(self)
 
     def __call__(self, element):
         if self._key not in element:
@@ -70,6 +91,11 @@ class query(object):
 
         try:
             return element[self._key] == self._value_eq
+        except AttributeError:
+            pass
+
+        try:
+            return element[self._key] != self._value_ne
         except AttributeError:
             pass
 
@@ -104,19 +130,27 @@ class query(object):
 has = query
 
 
-class query_or(object):
+class query_not(AndOrMixin):
+    """
+    Negates a query
+    """
+    def __init__(self, cond):
+        self._cond = cond
+
+    def __call__(self, element):
+        return not self._cond(element)
+
+    def __repr__(self):
+        return 'not ({})'.format(self._cond)
+
+
+class query_or(AndOrMixin):
     """
     Combines to queries with a logical 'or'.
     """
     def __init__(self, where1, where2):
         self._cond_1 = where1
         self._cond_2 = where2
-
-    def __and__(self, other):
-        return query_and(self, other)
-
-    def __or__(self, other):
-        return query_or(self, other)
 
     def __call__(self, element):
         return self._cond_1(element) or self._cond_2(element)
@@ -125,19 +159,13 @@ class query_or(object):
         return '({}) or ({})'.format(self._cond_1, self._cond_2)
 
 
-class query_and(object):
+class query_and(AndOrMixin):
     """
     Combines to queries with a logical 'and'.
     """
     def __init__(self, where1, where2):
         self._cond_1 = where1
         self._cond_2 = where2
-
-    def __and__(self, other):
-        return query_and(self, other)
-
-    def __or__(self, other):
-        return query_or(self, other)
 
     def __call__(self, element):
         return self._cond_1(element) and self._cond_2(element)
