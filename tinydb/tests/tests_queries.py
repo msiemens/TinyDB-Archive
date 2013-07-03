@@ -1,6 +1,6 @@
 from nose.tools import *
 
-from PlainDB.queries import field
+from tinydb.queries import field
 
 
 def test_eq():

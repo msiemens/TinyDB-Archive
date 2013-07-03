@@ -1,15 +1,15 @@
-from PlainDB import PlainDB, field
-from PlainDB.backends import MemoryBackend
+from tinydb import TinyDB, field
+from tinydb.storages import MemoryStorage
 
 from nose.tools import *
 
-#: :type: PlainDB
+#: :type: TinyDB
 db = None
 
 
 def setup():
     global db
-    db = PlainDB('<memory>', backend=MemoryBackend)
+    db = TinyDB('<memory>', storage=MemoryStorage)
 
 
 def test_one_table():

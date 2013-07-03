@@ -1,19 +1,17 @@
-from PlainDB.backends import MemoryBackend
-from PlainDB.queries import field
+from tinydb.storages import Storage, YAMLStorage
+from tinydb.queries import field
 
-from backends import Backend, YAMLBackend
-
-__all__ = ('PlainDB',)
+__all__ = ('TinyDB',)
 
 
-class PlainDB(object):
+class TinyDB(object):
     """
     A plain & simple DB.
 
-    PlainDB stores all types of python objects using a configurable backend.
+    TinyDB stores all types of python objects using a configurable backend.
     It has support for handy querying and tables.
 
-    >>> db = PlainDB('<memory>', backend=MemoryBackend)
+    >>> db = TinyDB('<memory>', backend=MemoryBackend)
     >>> db.insert({'data': 5})  # Insert into '_default' table
     >>> db.search(field('data') == 5)
     [{'data': 5, '_id': 1}]
@@ -29,9 +27,9 @@ class PlainDB(object):
 
     _table_cache = {}
 
-    def __init__(self, path, backend=YAMLBackend):
-        #: :type: Backend
-        self._backend = backend(path)
+    def __init__(self, path, storage=YAMLStorage):
+        #: :type: Storage
+        self._storage = storage(path)
         self._table = self.table('_default')
 
     def table(self, name='_default'):
@@ -66,10 +64,10 @@ class PlainDB(object):
         """
 
         if not table:
-            return self._backend.read() or {}
+            return self._storage.read() or {}
 
         try:
-            return self._backend.read()[table]
+            return self._storage.read()[table]
         except (KeyError, TypeError):
             return []
 
@@ -85,7 +83,7 @@ class PlainDB(object):
         """
 
         if not table:
-            self._backend.write(values)
+            self._storage.write(values)
         else:
             current_data = self._read()
             current_data[table] = values
@@ -104,7 +102,7 @@ class PlainDB(object):
 
 class Table(object):
     """
-    Represents a single PlainDB Table.
+    Represents a single TinyDB Table.
     """
 
     def __init__(self, name, db):
@@ -114,7 +112,7 @@ class Table(object):
         :param name: The name of the table.
         :type name: str
         :param db: The parent database.
-        :type db: PlainDB
+        :type db: TinyDB
         """
         self.name = name
         self._db = db

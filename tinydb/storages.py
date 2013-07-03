@@ -10,9 +10,9 @@ def touch(fname, times=None):
         os.utime(fname, times)
 
 
-class Backend(object):
+class Storage(object):
     """
-    A generic backend to PlainDB.
+    A generic storage for TinyDB.
     """
     __metaclass__ = ABCMeta
 
@@ -25,14 +25,14 @@ class Backend(object):
         raise NotImplementedError('To be overriden!')
 
 
-class YAMLBackend(Backend):
+class YAMLStorage(Storage):
     """
     Store the data in a YAML file.
     """
     # TODO: Add caching
 
     def __init__(self, path):
-        super(YAMLBackend, self).__init__()
+        super(YAMLStorage, self).__init__()
         touch(path)  # Create file if not exists
         self._handle = open(path, 'r+')
 
@@ -46,13 +46,13 @@ class YAMLBackend(Backend):
         return yaml.load(self._handle)
 
 
-class MemoryBackend(Backend):
+class MemoryStorage(Storage):
     """
     Store the data as YAML in memory.
     """
 
     def __init__(self, path=None):
-        super(MemoryBackend, self).__init__()
+        super(MemoryStorage, self).__init__()
         self.memory = ''
 
     def write(self, data):
