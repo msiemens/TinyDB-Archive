@@ -9,13 +9,11 @@ class query(object):
     def __init__(self, key):
         self._key = key
         self._repr = '<has>'
-        self._ready = False
 
     def __eq__(self, other):
         """
         Equals el[key] == other
         """
-        self._ready = True
         self._value_eq = other
         self._update_repr('==', other)
         return self
@@ -24,7 +22,6 @@ class query(object):
         """
         Equals el[key] < other
         """
-        self._ready = True
         self._value_lt = other
         self._update_repr('<', other)
         return self
@@ -33,7 +30,6 @@ class query(object):
         """
         Equals el[key] <= other
         """
-        self._ready = True
         self._value_le = other
         self._update_repr('<=', other)
         return self
@@ -42,7 +38,6 @@ class query(object):
         """
         Equals el[key] > other
         """
-        self._ready = True
         self._value_gt = other
         self._update_repr('>', other)
         return self
@@ -51,7 +46,6 @@ class query(object):
         """
         Equals el[key] >= other
         """
-        self._ready = True
         self._value_ge = other
         self._update_repr('>=', other)
         return self
@@ -61,7 +55,6 @@ class query(object):
         Equals self | other
         See :class:`query_or`.
         """
-        self._ready = True
         return query_or(self, other)
 
     def __and__(self, other):
@@ -69,13 +62,9 @@ class query(object):
         Equals self & other
         See :class:`query_and`.
         """
-        self._ready = True
         return query_and(self, other)
 
     def __call__(self, element):
-        if not self._ready:
-            raise RuntimeError('Cannot use query without comparison!')
-
         if self._key not in element:
             return False
 
@@ -103,6 +92,8 @@ class query(object):
             return element[self._key] >= self._value_ge
         except AttributeError:
             pass
+
+        return True  # _key exists in element (see above)
 
     def _update_repr(self, operator, value):
         self._repr = '\'{}\' {} {}'.format(self._key, operator, value)

@@ -56,7 +56,8 @@ def test_and():
     assert_false(query({'val1': '', 'val2': ''}))
 
 
-@raises(RuntimeError)
-def test_no_comparison():
-    query = has('')
-    query({})
+def test_has_key():
+    query = has('val3')
+
+    assert_true(query({'val3': 1}))
+    assert_false(query({'val1': 1, 'val2': 2}))
