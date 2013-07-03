@@ -92,3 +92,15 @@ def test_regex():
     assert_false(query({'val': '44'}))
     assert_false(query({'val': 'ab.'}))
     assert_false(query({'': None}))
+
+
+def test_custom():
+    def test(value):
+        return value == 42
+
+    query = has('val').test(test)
+
+    assert_true(query({'val': 42}))
+    assert_false(query({'val': 40}))
+    assert_false(query({'val': '44'}))
+    assert_false(query({'': None}))

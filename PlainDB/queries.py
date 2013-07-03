@@ -37,6 +37,12 @@ class query(AndOrMixin):
         """
         return query_regex(self._key, regex)
 
+    def test(self, func):
+        """
+        Equals self.test(func).
+        """
+        return query_custom(self._key, func)
+
     def __eq__(self, other):
         """
         Equals el[key] == other
@@ -196,3 +202,21 @@ class query_regex(AndOrMixin):
 
     def __repr__(self):
         return '\'{}\' ~= {} '.format(self._key, self.regex)
+
+
+class query_custom(AndOrMixin):
+    """
+    Lets check a field value against a custom test function.
+
+    The test function has to return True or False.
+    """
+
+    def __init__(self, key, test):
+        self.test = test
+        self._key = key
+
+    def __call__(self, element):
+        return self._key in element and self.test(element[self._key])
+
+    def __repr__(self):
+        return '\'{}\'.test({})'.format(self._key, self.test)
